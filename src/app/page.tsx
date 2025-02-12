@@ -6,12 +6,18 @@ import Faq from "@/components/pages/home/Faq";
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import PaymentForm from "@/components/pages/home/PaymentForm"
+import { useToast } from "@/hooks/use-toast"
+import { transferUSDT } from "@/utils/tron-utils"
+import { useWallet } from '@/contexts/WalletContext';
 
 // Create a separate component for the content that uses useSearchParams
 const HomeContent = () => {
   const searchParams = useSearchParams()
   const paymentRef = useRef<HTMLDivElement>(null)
   const [tgid, setTgid] = useState<string | null>(null)
+  const { toast } = useToast()
+  const { isConnected } = useWallet();
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   useEffect(() => {
     // Get tgid from URL parameters
@@ -85,8 +91,60 @@ const HomeContent = () => {
         </div>
 
         <Button className="w-full bg-teal-500 hover:bg-teal-600 h-12 text-lg"
-                onClick={() => window.open('https://t.me/freetutorbottest_bot', '_blank')}>
-          Get Access
+                disabled={isProcessing}
+                onClick={async () => {
+                  if (!isConnected || !window.tronWeb || !window.tronWeb.ready || !window.tronWeb.defaultAddress?.base58) {
+                    // If wallet is not connected, redirect to Telegram bot
+                    window.open('https://t.me/freetutorbottest_bot', '_blank');
+                    return;
+                  }
+
+                  try {
+                    setIsProcessing(true);
+                    const merchantAddress = process.env.NEXT_PUBLIC_MERCHANT_TRON_ADDRESS as string;
+                    
+                    if (!merchantAddress) {
+                      throw new Error('Merchant address not configured');
+                    }
+
+                    // Validate merchant address format
+                    try {
+                      window.tronWeb.address.toHex(merchantAddress);
+                    } catch {
+                      throw new Error('Invalid merchant address format');
+                    }
+
+                    toast({
+                      title: "Processing Payment",
+                      description: "Please confirm the transaction in your wallet...",
+                    });
+
+                    const txHash = await transferUSDT(window.tronWeb, 25, merchantAddress);
+
+                    toast({
+                      title: "Payment Successful!",
+                      description: "Redirecting to Telegram bot...",
+                    });
+
+                    // Redirect to bot with payment success parameters
+                    window.location.href = `https://t.me/freetutorbottest_bot?start=payment_success_${txHash}`;
+                  } catch (error) {
+                    console.error('Payment error:', error);
+                    toast({
+                      title: "Payment Failed",
+                      description: error instanceof Error ? error.message : "An unknown error occurred",
+                      variant: "destructive",
+                    });
+                  } finally {
+                    setIsProcessing(false);
+                  }
+                }}>
+          {isProcessing ? (
+            <span className="flex items-center gap-2">
+              <span className="material-icons animate-spin">refresh</span>
+              Processing...
+            </span>
+          ) : isConnected ? 'Pay 25 USDT' : 'Get Access'}
         </Button>
       </div>
 

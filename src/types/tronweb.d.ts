@@ -1,3 +1,9 @@
+declare interface TronTransactionOptions {
+  feeLimit?: number;
+  callValue?: number;
+  shouldPollResponse?: boolean;
+}
+
 declare interface TronWeb {
   defaultAddress: {
     base58: string;
@@ -16,7 +22,7 @@ declare interface TronWeb {
   contract(): {
     at(address: string): Promise<{
       transfer(recipient: string, amount: string): {
-        send(options?: any): Promise<string>;
+        send(options?: TronTransactionOptions): Promise<string>;
       };
     }>;
   };
@@ -33,4 +39,4 @@ declare interface Window {
   tronWeb?: TronWeb;
 }
 
-export type { TronWeb }; 
+export type { TronWeb, TronTransactionOptions }; 

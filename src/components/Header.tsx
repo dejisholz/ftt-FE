@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import type { TronWeb } from '@/types/tronweb';
 import {
@@ -12,188 +12,64 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { transferUSDT } from "@/utils/tron-utils"
-import { useToast } from "@/hooks/use-toast"
-
-interface WalletWithTronWeb {
-  tronWeb?: TronWeb;
-}
+// import { transferUSDT } from "@/utils/tron-utils"
+// import { useToast } from "@/hooks/use-toast"
+import { useWallet } from '@/contexts/WalletContext';
 
 declare global {
   interface Window {
     tronWeb: TronWeb;
-    tronLink: any;
+    tronLink: {
+      request: (params: { method: string }) => Promise<string[]>;
+    };
   }
 }
 
 const Header = () => {
-  const { toast } = useToast()
+//   const { toast } = useToast()
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [address, setAddress] = useState<string>('');
-  const [connected, setConnected] = useState<boolean>(false);
+//   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { isConnected, address, connect, disconnect } = useWallet();
 
-  useEffect(() => {
-    const checkTronLink = async () => {
-      try {
-        // First check if TronLink is installed
-        if (!window.tronLink) {
-          console.log('Please install TronLink');
-          return;
-        }
-
-        // Wait for TronLink to inject tronWeb
-        let tronWebState = {
-          installed: !!window.tronWeb,
-          loggedIn: window.tronWeb && window.tronWeb.ready
-        };
-
-        if (!tronWebState.installed) {
-          let tries = 0;
-          const maxTries = 10;
-          
-          while (!tronWebState.installed && tries < maxTries) {
-            tronWebState = {
-              installed: !!window.tronWeb,
-              loggedIn: window.tronWeb && window.tronWeb.ready
-            };
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            tries++;
-          }
-        }
-
-        // Check if we're already logged in
-        if (tronWebState.loggedIn) {
-          const currentAddress = window.tronWeb.defaultAddress.base58;
-          console.log('Already logged in:', currentAddress);
-          setAddress(currentAddress);
-          setConnected(true);
-        }
-
-        // Listen for account changes
-        window.addEventListener('message', (e) => {
-          if (e.data.message && e.data.message.action === "setAccount") {
-            const address = e.data.message.data.address;
-            setAddress(address);
-            setConnected(true);
-            console.log('Account changed:', address);
-          }
-          if (e.data.message && e.data.message.action === "setNode") {
-            console.log('Network changed:', e.data.message.data.node);
-          }
-          if (e.data.message && e.data.message.action === "disconnect") {
-            setAddress('');
-            setConnected(false);
-            console.log('Disconnected');
-          }
-        });
-
-      } catch (error) {
-        console.error('Error checking TronLink:', error);
-      }
-    };
-
-    checkTronLink();
-  }, []);
-
-  const handleConnect = async () => {
-    try {
-      // Check if TronLink is installed
-      if (!window.tronLink) {
-        console.log('TronLink not found');
-        setShowDialog(true);
-        return;
-      }
-
-      try {
-        // Request account access
-        const account = await window.tronLink.request({
-          method: 'tron_requestAccounts'
-        });
-
-        if (!account) {
-          throw new Error('No account found');
-        }
-
-        // Wait for tronWeb to be injected
-        let tries = 0;
-        while (!window.tronWeb?.ready && tries < 10) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          tries++;
-        }
-
-        if (!window.tronWeb?.ready) {
-          throw new Error('TronWeb not ready');
-        }
-
-        const address = window.tronWeb.defaultAddress.base58;
-        console.log('Connected address:', address);
-        setAddress(address);
-        setConnected(true);
-        
-        toast({
-          title: "Connected Successfully",
-          description: "Your wallet is now connected",
-        });
-
-      } catch (error) {
-        console.error('TronLink request error:', error);
-        toast({
-          title: "Connection Failed",
-          description: "Please unlock your TronLink wallet and try again",
-          variant: "destructive",
-        });
-      }
-
-    } catch (error) {
-      console.error('Connection error:', error);
-      toast({
-        title: "Connection Failed",
-        description: "Please make sure TronLink is installed and unlocked",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handlePayment = async () => {
-    try {
-      setIsProcessing(true);
-      const merchantAddress = process.env.NEXT_PUBLIC_MERCHANT_TRON_ADDRESS;
+//   const handlePayment = async () => {
+//     try {
+//       setIsProcessing(true);
+//       const merchantAddress = process.env.NEXT_PUBLIC_MERCHANT_TRON_ADDRESS;
       
-      if (!merchantAddress) {
-        throw new Error('Merchant address not configured');
-      }
+//       if (!merchantAddress) {
+//         throw new Error('Merchant address not configured');
+//       }
 
-      if (!window.tronWeb) {
-        throw new Error('No active wallet found');
-      }
+//       if (!window.tronWeb) {
+//         throw new Error('No active wallet found');
+//       }
 
-      toast({
-        title: "Processing Payment",
-        description: "Please confirm the transaction in your wallet...",
-      });
+//       toast({
+//         title: "Processing Payment",
+//         description: "Please confirm the transaction in your wallet...",
+//       });
 
-      const txHash = await transferUSDT(window.tronWeb, 25, merchantAddress);
+//       const txHash = await transferUSDT(window.tronWeb, 25, merchantAddress);
 
-      toast({
-        title: "Payment Successful!",
-        description: "Redirecting to Telegram bot...",
-      });
+//       toast({
+//         title: "Payment Successful!",
+//         description: "Redirecting to Telegram bot...",
+//       });
 
-      window.location.href = `https://t.me/freetutorbottest_bot?start=paid_online=${txHash}`;
+//       window.location.href = `https://t.me/freetutorbottest_bot?start=paid_online=${txHash}`;
 
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast({
-        title: "Payment Failed",
-        description: error instanceof Error ? error.message : "An unknown error occurred",
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+//     } catch (error) {
+//       console.error('Payment error:', error);
+//       toast({
+//         title: "Payment Failed",
+//         description: error instanceof Error ? error.message : "An unknown error occurred",
+//         variant: "destructive",
+//       });
+//     } finally {
+//       setIsProcessing(false);
+//     }
+//   };
 
   return (
     <>
@@ -208,12 +84,12 @@ const Header = () => {
 
             {/* Wallet Connection */}
             <div className="relative" ref={dropdownRef}>
-              {connected ? (
+              {isConnected ? (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-300">
                     {`${address?.slice(0, 6)}...${address?.slice(-4)}`}
                   </span>
-                  <Button
+                  {/* <Button
                     onClick={handlePayment}
                     disabled={isProcessing}
                     className="px-6 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium transition-colors duration-200"
@@ -226,16 +102,9 @@ const Header = () => {
                     ) : (
                       "Pay 25 USDT"
                     )}
-                  </Button>
+                  </Button> */}
                   <Button
-                    onClick={() => {
-                      setAddress('');
-                      setConnected(false);
-                      toast({
-                        title: "Disconnected",
-                        description: "Your wallet has been disconnected",
-                      });
-                    }}
+                    onClick={disconnect}
                     variant="outline"
                     className="px-3 py-2 rounded-lg text-red-500 hover:text-red-600 border-red-500 hover:border-red-600"
                   >
@@ -244,7 +113,7 @@ const Header = () => {
                 </div>
               ) : (
                 <Button
-                  onClick={handleConnect}
+                  onClick={connect}
                   className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors duration-200"
                 >
                   Connect TronLink
