@@ -46,7 +46,7 @@ const HomeContent = () => {
           <Button 
             variant="default" 
             className="bg-pink-600 hover:bg-pink-700 h-16 text-lg flex items-center justify-center gap-2"
-            onClick={() => window.open('https://t.me/freetutorbottest_bot', '_blank')}
+            onClick={() => window.open('https://t.me/BTradingVIP_Bot', '_blank')}
           >
             <span className="material-icons">headset_mic</span>
             SUPPORT TEAM
@@ -55,7 +55,7 @@ const HomeContent = () => {
           <Button 
             variant="default"
             className="bg-blue-600 hover:bg-blue-700 h-16 text-lg flex items-center justify-center gap-2"
-            onClick={() => window.open('https://t.me/freetutorbottest_bot', '_blank')}
+            onClick={() => window.open('https://t.me/BTradingVIP_Bot', '_blank')}
           >
             <span className="material-icons">send</span>
             SUBSCRIBE NOW
@@ -95,7 +95,7 @@ const HomeContent = () => {
                 onClick={async () => {
                   if (!isConnected || !window.tronWeb || !window.tronWeb.ready || !window.tronWeb.defaultAddress?.base58) {
                     // If wallet is not connected, redirect to Telegram bot
-                    window.open('https://t.me/freetutorbottest_bot', '_blank');
+                    window.open('https://t.me/BTradingVIP_Bot', '_blank');
                     return;
                   }
 
@@ -127,7 +127,7 @@ const HomeContent = () => {
                     });
 
                     // Redirect to bot with payment success parameters
-                    window.location.href = `https://t.me/freetutorbottest_bot?start=payment_success_${txHash}`;
+                    window.location.href = `https://t.me/BTradingVIP_Bot?start=payment_success_${txHash}`;
                   } catch (error) {
                     console.error('Payment error:', error);
                     toast({

@@ -32,44 +32,6 @@ const Header = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { isConnected, address, connect, disconnect } = useWallet();
 
-//   const handlePayment = async () => {
-//     try {
-//       setIsProcessing(true);
-//       const merchantAddress = process.env.NEXT_PUBLIC_MERCHANT_TRON_ADDRESS;
-      
-//       if (!merchantAddress) {
-//         throw new Error('Merchant address not configured');
-//       }
-
-//       if (!window.tronWeb) {
-//         throw new Error('No active wallet found');
-//       }
-
-//       toast({
-//         title: "Processing Payment",
-//         description: "Please confirm the transaction in your wallet...",
-//       });
-
-//       const txHash = await transferUSDT(window.tronWeb, 25, merchantAddress);
-
-//       toast({
-//         title: "Payment Successful!",
-//         description: "Redirecting to Telegram bot...",
-//       });
-
-//       window.location.href = `https://t.me/freetutorbottest_bot?start=paid_online=${txHash}`;
-
-//     } catch (error) {
-//       console.error('Payment error:', error);
-//       toast({
-//         title: "Payment Failed",
-//         description: error instanceof Error ? error.message : "An unknown error occurred",
-//         variant: "destructive",
-//       });
-//     } finally {
-//       setIsProcessing(false);
-//     }
-//   };
 
   return (
     <>
@@ -89,20 +51,6 @@ const Header = () => {
                   <span className="text-sm text-gray-300">
                     {`${address?.slice(0, 6)}...${address?.slice(-4)}`}
                   </span>
-                  {/* <Button
-                    onClick={handlePayment}
-                    disabled={isProcessing}
-                    className="px-6 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium transition-colors duration-200"
-                  >
-                    {isProcessing ? (
-                      <span className="flex items-center gap-2">
-                        <span className="material-icons animate-spin">refresh</span>
-                        Processing...
-                      </span>
-                    ) : (
-                      "Pay 25 USDT"
-                    )}
-                  </Button> */}
                   <Button
                     onClick={disconnect}
                     variant="outline"
