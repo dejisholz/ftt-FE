@@ -32,7 +32,7 @@ const HomeContent = () => {
   }, [searchParams])
 
   return (
-    <div className="min-h-screen text-white px-4 py-8 md:py-12 lg:py-16">
+    <div className="min-h-screen text-white px-4 py-20 md:py-20 lg:py-24">
       {/* Hero Section */}
       <div className="max-w-4xl mx-auto text-center mb-12">
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-black/30 p-4 rounded-lg inline-block">
