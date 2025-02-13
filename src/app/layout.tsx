@@ -4,6 +4,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers";
 import Header from "@/components/Header";
+import PaymentClosed from "@/components/reusables/PaymentClosed";
+import { getPaymentWindowStatus } from "@/utils/payment-window";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -16,6 +18,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // const { isOpen } = getPaymentWindowStatus();
+  const isOpen = true;
   return (
     <html lang="en">
       <head>
@@ -23,8 +27,8 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-[url('/banner-bg.jpg')] bg-bottom bg-no-repeat bg-fixed bg-cover`}>
         <Providers>
-          <Header />
-          {children}
+          {isOpen ? <Header /> : <PaymentClosed />}
+          {isOpen && children}
           <Toaster />
         </Providers>
       </body>

@@ -9,20 +9,20 @@ interface FaqItem {
 
 const faqData: FaqItem[] = [
   {
-    question: "What is CRYPTEN?",
-    answer: "CRYPTO is a utility token based on the ERC20 standard. All transactions on the CRYPTEN platform will be carried out in CRYPTO. TheCRYPTO token will be freely tradable on major exchanges and is fully compatible with Ethereum wallets."
+    question: "Is my Payment information (transaction hash) secure?",
+    answer: "Absolutely. All payments are processed through encrypted, secure channels."
   },
   {
-    question: "What is CRYPTO Token?",
-    answer: "CRYPTO Token is our platform's native digital currency that facilitates transactions and provides access to premium features within our ecosystem."
+    question: "How long does my membership remain active?",
+    answer: "Membership is valid for 30 days, after which you'll be automatically removed unless you renew."
   },
   {
-    question: "What is the price of the CRYPTO Token?",
-    answer: "The price of CRYPTO Token is determined by market dynamics and can be checked on our supported exchanges."
+    question: "Can I make payment from my Bybit or KuCoin account?",
+    answer: "Yes. You can make payment via your Bybit account, Remintano account, Gate.io account, KuCoin account and pretty much any other CREDIBLE crypto wallet out there that uses the TRON blockchain network. Just ensure you select the \"TRON (TRC20) network\", and that you enter the correct wallet address while making payment."
   },
   {
-    question: "Why do you accept only Ether (ETH)?",
-    answer: "We currently accept ETH as it provides secure, fast, and reliable transactions on the Ethereum network."
+    question: "Do you accept Bitcoin, usdt, BNB, etc?",
+    answer: "Currently, we only accept payments in USDT (using the TRC20 network), to ensure fast and seamless payment transactions for your subscription."
   }
 ]
 

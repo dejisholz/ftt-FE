@@ -46,7 +46,7 @@ const HomeContent = () => {
           <Button 
             variant="default" 
             className="bg-pink-600 hover:bg-pink-700 h-16 text-lg flex items-center justify-center gap-2"
-            onClick={() => window.open('https://t.me/BTradingVIP_Bot', '_blank')}
+            onClick={() => window.open('https://t.me/bo_foreignexchangetrader', '_blank')}
           >
             <span className="material-icons">headset_mic</span>
             SUPPORT TEAM

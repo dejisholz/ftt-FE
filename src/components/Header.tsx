@@ -11,6 +11,12 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 // import { transferUSDT } from "@/utils/tron-utils"
 // import { useToast } from "@/hooks/use-toast"
@@ -60,12 +66,21 @@ const Header = () => {
                   </Button>
                 </div>
               ) : (
-                <Button
-                  onClick={connect}
-                  className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors duration-200"
-                >
-                  Connect TronLink
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => setShowDialog(true)}
+                        className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors duration-200"
+                      >
+                        Connect TronLink
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-[300px] p-4">
+                      <p>Big Upgrade Coming Soon! Get ready for smarter features, better performance, and more wins. Stay tuned!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </div>
           </div>
@@ -76,14 +91,14 @@ const Header = () => {
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>TronLink Not Detected</DialogTitle>
+            <DialogTitle>Rolling out soon!</DialogTitle>
             <DialogDescription>
-              Please install TronLink wallet and unlock it to continue.
+            Big Upgrade Coming Soon! Get ready for smarter features, better performance, and more wins. Stay tuned!
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-start">
             <div className="grid gap-4 sm:grid-cols-2">
-              <button
+              {/* <button
                 onClick={() => {
                   window.open('https://www.tronlink.org/', '_blank');
                   setShowDialog(false);
@@ -97,7 +112,7 @@ const Header = () => {
                 className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Cancel
-              </button>
+              </button> */}
             </div>
           </DialogFooter>
         </DialogContent>
