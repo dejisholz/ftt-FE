@@ -18,7 +18,7 @@ const faqData: FaqItem[] = [
   },
   {
     question: "Can I make payment from my Bybit or KuCoin account?",
-    answer: "Yes. You can make payment via your Bybit account, Remintano account, Gate.io account, KuCoin account and pretty much any other CREDIBLE crypto wallet out there that uses the TRON blockchain network. Just ensure you select the \"TRON (TRC20) network\", and that you enter the correct wallet address while making payment."
+    answer: "Yes. You can make payment via your Bybit account, Remitano account, Gate.io account, KuCoin account and pretty much any other CREDIBLE crypto wallet out there that uses the TRON blockchain network. Just ensure you select the \"TRON (TRC20) network\", and that you enter the correct wallet address while making payment."
   },
   {
     question: "Do you accept Bitcoin, usdt, BNB, etc?",
