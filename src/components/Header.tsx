@@ -36,7 +36,7 @@ const Header = () => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
 //   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { isConnected, address, connect, disconnect } = useWallet();
+  const { isConnected, address, disconnect } = useWallet();
 
 
   return (

@@ -19,8 +19,9 @@ const isLeapYear = (year: number): boolean => {
 
 const getNextMonth = (openMonth: number, currentYear: number): number => {
   // Special handling for February
+  const isLeapYearResult = isLeapYear(currentYear);
 
-  if (openMonth === 2) { // February is month 1 (0-based)
+  if (openMonth === 2 && !isLeapYearResult) { // February is month 1 (0-based)
     return 2;
   }
   // For all other months, increment normally

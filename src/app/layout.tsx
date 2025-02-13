@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers";
 import Header from "@/components/Header";
 import PaymentClosed from "@/components/reusables/PaymentClosed";
-import { getPaymentWindowStatus } from "@/utils/payment-window";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
