@@ -174,15 +174,15 @@ const HomeContent = () => {
               <span className="material-icons text-teal-400">headset_mic</span>
               <h3 className="text-xl font-semibold">Direct Support</h3>
             </div>
-            <p className="text-gray-300">one-on-one support from our team.</p>
+            <p className="text-gray-300">One-on-One support from our team.</p>
           </div>
 
           <div className="bg-[#2A1245] rounded-xl p-6">
             <div className="flex items-center gap-3 mb-2">
               <span className="material-icons text-teal-400">signal_cellular_alt</span>
-              <h3 className="text-xl font-semibold">Access to daily trade Signals</h3>
+              <h3 className="text-xl font-semibold">Access to Daily Trade Signals</h3>
             </div>
-            <p className="text-gray-300">Access to latest trading strategies</p>
+            <p className="text-gray-300">Access to the latest reading strategies</p>
           </div>
 
           <div className="bg-[#2A1245] rounded-xl p-6">
@@ -284,7 +284,7 @@ const HomeContent = () => {
                     <span className="material-icons text-teal-400">check_circle</span>
                   </div>
                 </div>
-                <div className="bg-black/30 p-4 rounded-lg flex-1">
+                <div className="bg-black/30 p-4 rounded-lg flex-1" ref={paymentRef}>
                   <h3 className="text-xl font-semibold mb-2">Success</h3>
                   <p className="text-gray-300">
                     The TradeTutor will inbox you with a Link to join the group. The link lasts for 
@@ -297,7 +297,7 @@ const HomeContent = () => {
         </div>
 
         {/* Payment Form */}
-        <div ref={paymentRef}>
+        <div>
           <PaymentForm paymentId={tgid || 'No ID Provided Yet'} />
         </div>
       </div>
