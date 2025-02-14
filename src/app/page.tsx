@@ -182,7 +182,7 @@ const HomeContent = () => {
               <span className="material-icons text-teal-400">signal_cellular_alt</span>
               <h3 className="text-xl font-semibold">Access to Daily Trade Signals</h3>
             </div>
-            <p className="text-gray-300">Access to the latest reading strategies</p>
+            <p className="text-gray-300">Access to the Latest Trading Strategies</p>
           </div>
 
           <div className="bg-[#2A1245] rounded-xl p-6">
