@@ -263,7 +263,7 @@ const HomeContent = () => {
                 </div>
               </div>
 
-              <div className="relative flex items-start gap-4">
+              <div className="relative flex items-start gap-4" ref={paymentRef}>
                 <div className="flex-none">
                   <div className="w-12 h-12 rounded-full bg-[#2A1245] flex items-center justify-center">
                     <span className="material-icons text-yellow-500">done_all</span>
@@ -284,7 +284,7 @@ const HomeContent = () => {
                     <span className="material-icons text-teal-400">check_circle</span>
                   </div>
                 </div>
-                <div className="bg-black/30 p-4 rounded-lg flex-1" ref={paymentRef}>
+                <div className="bg-black/30 p-4 rounded-lg flex-1">
                   <h3 className="text-xl font-semibold mb-2">Success</h3>
                   <p className="text-gray-300">
                     The TradeTutor will inbox you with a Link to join the group. The link lasts for 
