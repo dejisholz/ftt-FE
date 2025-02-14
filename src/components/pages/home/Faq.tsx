@@ -14,7 +14,7 @@ const faqData: FaqItem[] = [
   },
   {
     question: "How long does my membership remain active?",
-    answer: "Membership is valid for 30 days, after which you'll be automatically removed unless you renew."
+    answer: "Membership is valid for 29 days, Which means that all members will be automatically removed on 29th of each month and the website will be opened for Subscription On 30th of Each month."
   },
   {
     question: "Can I make payment from my Bybit or KuCoin account?",
