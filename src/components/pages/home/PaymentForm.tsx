@@ -197,14 +197,14 @@ export default function PaymentForm(props: { paymentId: string | number }) {
               <div className="flex items-center justify-center gap-2 bg-black/30 p-3 rounded-lg">
                 <input
                   type="text"
-                  value="TCRntw5B90CUdmA6FcNZWKOPs621IH83ja"
+                  value="TCRntw5B9QCUdmA6FcNZWKQPs621iH83ja"
                   readOnly
-                  className="bg-transparent text-white text-center flex-1 outline-none"
+                  className="bg-transparent text-white text-center flex-1 outline-none text-sm md:text-base lg:text-lg"
                 />
                 <button 
                   className="text-teal-400 hover:text-teal-300"
                   onClick={() => {
-                    navigator.clipboard.writeText("TCRntw5B90CUdmA6FcNZWKOPs621IH83ja")
+                    navigator.clipboard.writeText("TCRntw5B9QCUdmA6FcNZWKQPs621iH83ja")
                     toast({
                       title: "✔️ Copied to clipboard",
                     })
