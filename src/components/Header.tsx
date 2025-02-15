@@ -47,7 +47,7 @@ const Header = () => {
             {/* Logo */}
             <div className="flex items-center">
               <Image src="/logo.jpeg" alt="Trade Tutor" width={40} height={40} />
-              <h1 className="text-2xl font-bold text-gray-200">Trade Tutor</h1>
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-200 ml-2">Trade Tutor</h1>
             </div>
 
             {/* Wallet Connection */}
@@ -71,7 +71,7 @@ const Header = () => {
                     <TooltipTrigger asChild>
                       <Button
                         onClick={() => setShowDialog(true)}
-                        className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors duration-200"
+                        className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors duration-200 text-xs md:text-base lg:text-lg"
                       >
                         Connect TronLink
                       </Button>
