@@ -73,7 +73,7 @@ export default function PaymentForm(props: { paymentId: string | number }) {
           if (!response) return false;
           const isValidTx = response.transaction_id === transactionHash;
           const amountInUSDT = Number(response.amount) / 10 ** 6;
-          const timeDifference = isTimeframeExceeded(response.timestamp || Date.now(), Date.now(), 100);
+          const timeDifference = isTimeframeExceeded(response.timestamp || Date.now(), Date.now(), 0.5);
           return isValidTx && amountInUSDT >= 25 && !timeDifference;
         })
         .catch((error) => {
@@ -246,7 +246,7 @@ export default function PaymentForm(props: { paymentId: string | number }) {
           </h3>
           <p className="text-sm text-gray-300">
             Click the button below to join our VIP channel. This link will
-            expire in 1 hour.
+            expire in 30 minutes.
           </p>
           <Button
             className="w-full bg-teal-500 hover:bg-teal-600 h-12 text-base flex items-center justify-center gap-2"

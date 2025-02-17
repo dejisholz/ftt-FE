@@ -80,7 +80,7 @@ export async function createChannelInviteLink(
 ): Promise<TelegramResponse<InviteLinkResponse>> {
   try {
     const expireDate =
-      options?.expire_date || Math.floor(Date.now() / 1000) + 3600; // 1 hour expiry
+      options?.expire_date || Math.floor(Date.now() / 1000) + 1800; // 30 minutes expiry
 
     const params: CreateInviteLinkParams = {
       chat_id: channelId,
@@ -131,7 +131,7 @@ export async function sendMessage(
   const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
   const params = {
     chat_id: userId,
-    text: `Hello! Here is your invite link: ${inviteLink} \n\nNote: this link will expire in 1 hour and can be used only once.`,
+    text: `Hello! Here is your invite link: ${inviteLink} \n\nNote: this link will expire in 30 minutes and can be used only once.`,
   };
 
   const response = await fetch(url, {
