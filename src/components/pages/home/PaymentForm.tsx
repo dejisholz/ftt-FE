@@ -5,6 +5,7 @@ import {
   fetchSpecificTransaction,
 } from "@/utils/trc20Actions";
 import { sendMessage, createChannelInviteLink } from "@/utils/botActions";
+import { addTransaction, findTransaction } from "@/utils/transactionHandler";
 
 // d3f4e8d3e097ca8b42ec54af420e8a4b448d02296ad8e81f08b509a1f96defdd
 
@@ -35,53 +36,6 @@ export default function PaymentForm(props: { paymentId: string | number }) {
     return differenceInHours > hours;
   }
 
-  // Function to request invite link from bot
-
-  // Start monitoring transactions when payment method is selected
-  // useEffect(() => {
-  //   if (selectedPayment === "usdt_trc20" && !isMonitoring) {
-  //     setIsMonitoring(true);
-  //     const merchantAddress =
-  //       process.env.NEXT_PUBLIC_MERCHANT_TRON_ADDRESS || "";
-
-  //     const cleanup = monitorTRC20Transactions(
-  //       merchantAddress,
-  //       (transaction) => {
-  //         // When a new transaction is detected, verify if it matches our expected amount
-  //         if (transaction.value === "25000000") {
-  //           // 25 USDT (6 decimals)
-  //           toast({
-  //             title: "✅ Payment Detected!",
-  //             description: "Verifying your transaction...",
-  //           });
-
-  //           // Verify the transaction
-  //           verifyUSDTTransaction(
-  //             transaction.transaction_id,
-  //             25,
-  //             merchantAddress
-  //           ).then((isValid) => {
-  //             if (isValid) {
-  //               toast({
-  //                 title: "🎉 Payment Confirmed!",
-  //                 description: "Generating your channel invite...",
-  //               });
-  //               // Request invite link from bot
-  //               // requestInviteLink(props.paymentId);
-  //             }
-  //           });
-  //         }
-  //       },
-  //       10000 // Check every 10 seconds
-  //     );
-
-  //     return () => {
-  //       cleanup();
-  //       setIsMonitoring(false);
-  //     };
-  //   }
-  // }, [selectedPayment, toast, props.paymentId, isMonitoring]);
-
   // Handle manual transaction hash verification
   const handleVerifyTransaction = async (paymentId: string | number) => {
     if (!transactionHash) {
@@ -95,6 +49,20 @@ export default function PaymentForm(props: { paymentId: string | number }) {
 
     try {
       setIsVerifying(true);
+
+      // Check if transaction is already processed
+      const existingTransaction = await findTransaction(transactionHash);
+      
+      if (existingTransaction && existingTransaction.length > 0) {
+        toast({
+          title: "⚠️ Transaction Already Processed",
+          description: "This transaction hash has already been used for payment.",
+          variant: "destructive",
+        });
+        setIsVerifying(false);
+        return;
+      }
+
       const merchantAddress =
         process.env.NEXT_PUBLIC_MERCHANT_TRON_ADDRESS || "";
       const isValid = await fetchSpecificTransaction(
@@ -121,24 +89,32 @@ export default function PaymentForm(props: { paymentId: string | number }) {
         });
       console.log(isValid);
       if (isValid) {
-        toast({
-          title: "✅ Payment Verified!",
-          description: "Generating your channel invite...",
-        });
-        // Request invite link from bot
-        await createChannelInviteLink(botToken, channelId)
-          .then((response) => {
-            // console.log(response.result.invite_link);
-            setInviteLink(response.result.invite_link);
-            sendMessage(botToken, paymentId, response.result.invite_link);
-            toast({
-              title: "✅ Invite Link Sent!",
-              description: "Invite link has been sent to your Telegram account",
-            });
-          })
-          .catch((error) => {
-            console.error("Error details:", error);
+        try {
+          // Add transaction to database first
+          await addTransaction(paymentId, transactionHash);
+
+          toast({
+            title: "✅ Payment Verified!",
+            description: "Generating your channel invite...",
           });
+
+          // Request invite link from bot
+          const inviteLinkResponse = await createChannelInviteLink(botToken, channelId);
+          setInviteLink(inviteLinkResponse.result.invite_link);
+          await sendMessage(botToken, paymentId, inviteLinkResponse.result.invite_link);
+          
+          toast({
+            title: "✅ Invite Link Sent!",
+            description: "Invite link has been sent to your Telegram account",
+          });
+        } catch (error) {
+          console.error("Error in payment processing:", error);
+          toast({
+            title: "❌ Error",
+            description: "Failed to process payment. Please contact support.",
+            variant: "destructive",
+          });
+        }
       } else {
         toast({
           title: "❌ Verification Failed",
