@@ -5,53 +5,13 @@ interface Transaction {
     amount: string;
     timestamp: number;
   }
-  
-  export async function fetchTRC20Transactions(
-    walletAddress: string
-  ): Promise<Transaction[]> {
-    try {
-      // Using Tron Grid API endpoint (public)
-      const response = await fetch(
-        `https://api.trongrid.io/v1/accounts/${walletAddress}/transactions/trc20`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      );
-  
-      if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, body: ${errorBody}`
-        );
-      }
-  
-      const data = await response.json();
-  
-      if (!data.data || !Array.isArray(data.data)) {
-        console.log("Raw API response:", data);
-        throw new Error("Unexpected API response format");
-      }
-  
-      // Transform the response data into our Transaction interface
-      return data.data.map((tx: any) => ({
-        transaction_id: tx.transaction_id,
-        from: tx.from,
-        to: tx.to,
-        amount: tx.value,
-        timestamp: tx.block_timestamp,
-      }));
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error fetching TRC20 transactions:", error.message);
-      } else {
-        console.error("Unknown error occurred:", error);
-      }
-      throw error;
-    }
+
+  interface TronGridTransaction {
+    transaction_id: string;
+    from: string;
+    to: string;
+    value: string;
+    block_timestamp: number;
   }
   
   export async function fetchSpecificTransaction(
@@ -87,7 +47,7 @@ interface Transaction {
   
       // Find the specific transaction
       const transaction = data.data.find(
-        (tx: any) => tx.transaction_id === txHash
+        (tx: TronGridTransaction) => tx.transaction_id === txHash
       );
   
       if (!transaction) {
@@ -137,8 +97,9 @@ interface Transaction {
         message: isSender ? "Verified sender" : "Invalid sender",
         amountMessage: amountMessage
       };
-    } catch (error) {
-      return { success: false, message: "Error verifying transaction", amountMessage: "" };
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, message: "Error verifying transaction: " + errorMessage, amountMessage: "" };
     }
   }
   

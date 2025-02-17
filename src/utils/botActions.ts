@@ -1,23 +1,68 @@
 const bot_token = "8121781737:AAGy9kv8kvFjwF1TpODH2lthNcVom6M_EZI";
 const channelID = "-1002400975853"; // Add -100 prefix for supergroup/channel IDs
-const channelUsername = "@BTradingVIP_Bot";
+// const channelUsername = "@BTradingVIP_Bot";
 const bot_username = "BTradingVIP_Bot";
 const bot_api = `https://api.telegram.org/bot${bot_token}`;
 // const userID = 6463737305;
 
 // telegramInvite.ts
 
-export interface CreateInviteLinkParams {
+interface TelegramUser {
+  id: number;
+  is_bot: boolean;
+  first_name: string;
+  username?: string;
+}
+
+interface TelegramChat {
+  id: number;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  type: string;
+}
+
+interface MessageEntity {
+  offset: number;
+  length: number;
+  type: string;
+}
+
+interface LinkPreviewOptions {
+  url: string;
+}
+
+interface InviteLinkResponse {
+  invite_link: string;
+  creator: TelegramUser;
+  expire_date: number;
+  member_limit: number;
+  creates_join_request: boolean;
+  is_primary: boolean;
+  is_revoked: boolean;
+}
+
+interface MessageResponse {
+  message_id: number;
+  from: TelegramUser;
+  chat: TelegramChat;
+  date: number;
+  text: string;
+  entities?: MessageEntity[];
+  link_preview_options?: LinkPreviewOptions;
+}
+
+interface TelegramResponse<T> {
+  ok: boolean;
+  result: T;
+  description?: string;
+}
+
+interface CreateInviteLinkParams {
   chat_id: string;
   expire_date?: number;
   member_limit?: number;
   name?: string;
-}
-
-export interface TelegramResponse<T> {
-  ok: boolean;
-  result: T;
-  description?: string; // Added for error messages
 }
 
 /**
@@ -32,7 +77,7 @@ export async function createChannelInviteLink(
   botToken: string,
   channelId: string,
   options?: Partial<CreateInviteLinkParams>
-): Promise<TelegramResponse<any>> {
+): Promise<TelegramResponse<InviteLinkResponse>> {
   try {
     const expireDate =
       options?.expire_date || Math.floor(Date.now() / 1000) + 3600; // 1 hour expiry
@@ -54,7 +99,7 @@ export async function createChannelInviteLink(
       body: JSON.stringify(params),
     });
 
-    const data: TelegramResponse<any> = await response.json();
+    const data: TelegramResponse<InviteLinkResponse> = await response.json();
 
     if (!data.ok) {
       throw new Error(
@@ -62,7 +107,7 @@ export async function createChannelInviteLink(
       );
     }
 
-    // console.log('Telegram API response:', data.result.invite_link); // Debug log
+    console.log('Telegram API response:', data); // Debug log
     return data;
   } catch (error) {
     console.error("Error details:", error);
@@ -82,7 +127,7 @@ export async function sendMessage(
   botToken: string,
   userId: string | number,
   inviteLink: string
-): Promise<TelegramResponse<any>> {
+): Promise<TelegramResponse<MessageResponse>> {
   const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
   const params = {
     chat_id: userId,
@@ -97,14 +142,14 @@ export async function sendMessage(
     body: JSON.stringify(params),
   });
 
-  const data: TelegramResponse<any> = await response.json();
+  const data: TelegramResponse<MessageResponse> = await response.json();
 
   if (!data.ok) {
     throw new Error(
       `Telegram API error: ${data.description || "Unknown error"}`
     );
   }
-
+  console.log("Telegram MessageAPI response:", data);
   return data;
 }
 

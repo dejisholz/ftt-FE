@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useCallback } from "react";
+import { useState} from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   fetchSpecificTransaction,
-  verifyTransactionAmount,
 } from "@/utils/trc20Actions";
 import { sendMessage, createChannelInviteLink } from "@/utils/botActions";
 
@@ -13,7 +12,6 @@ export default function PaymentForm(props: { paymentId: string | number }) {
   const [selectedPayment, setSelectedPayment] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isMonitoring, setIsMonitoring] = useState(false);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const { toast } = useToast();
   const botToken = process.env.NEXT_PUBLIC_BOT_TOKEN as string;
@@ -104,9 +102,10 @@ export default function PaymentForm(props: { paymentId: string | number }) {
         transactionHash
       )
         .then((response) => {
-          const isValidTx = response?.transaction_id === transactionHash;
-          const amountInUSDT = Number(response?.amount) / 10 ** 6;
-          const timeDifference = isTimeframeExceeded(response?.timestamp!, Date.now(), 1);
+          if (!response) return false;
+          const isValidTx = response.transaction_id === transactionHash;
+          const amountInUSDT = Number(response.amount) / 10 ** 6;
+          const timeDifference = isTimeframeExceeded(response.timestamp || Date.now(), Date.now(), 100);
           return isValidTx && amountInUSDT >= 25 && !timeDifference;
         })
         .catch((error) => {
