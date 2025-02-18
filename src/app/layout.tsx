@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 import Header from "@/components/Header";
 import PaymentClosed from "@/components/reusables/PaymentClosed";
 const inter = Inter({ subsets: ["latin"] });
-// import { getPaymentWindowStatus } from "@/utils/payment-window";
+import { getPaymentWindowStatus } from "@/utils/payment-window";
 
 export const metadata: Metadata = {
   title: "FreeTradeTutor",
@@ -18,8 +18,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const { isOpen } = getPaymentWindowStatus();
-  const isOpen = true;
+  const { isOpen } = getPaymentWindowStatus();
+  // const isOpen = true;
   return (
     <html lang="en">
       <head>
