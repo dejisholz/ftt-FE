@@ -2,6 +2,7 @@ import { getPaymentWindowStatus } from "@/utils/payment-window";
 
 const PaymentClosed = () => {
   const { opensOn, closesOn, daysUntilOpen } = getPaymentWindowStatus();
+  console.log(opensOn, closesOn, daysUntilOpen);
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-start pt-20 px-4 md:px-8 lg:px-16">
@@ -31,11 +32,11 @@ const PaymentClosed = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-sm text-gray-500">Opens</div>
-                  <div className="font-semibold">{opensOn}</div>
+                  <div className="font-semibold text-blue-500">{opensOn}</div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-500">Closes</div>
-                  <div className="font-semibold">{closesOn}</div>
+                  <div className="font-semibold text-red-500">{closesOn}</div>
                 </div>
               </div>
             </div>

@@ -9,6 +9,8 @@ import PaymentForm from "@/components/pages/home/PaymentForm"
 import { useToast } from "@/hooks/use-toast"
 import { transferUSDT } from "@/utils/tron-utils"
 import { useWallet } from '@/contexts/WalletContext';
+import PaymentClosed from "@/components/reusables/PaymentClosed";
+import { getPaymentWindowStatus } from "@/utils/payment-window";
 
 // Create a separate component for the content that uses useSearchParams
 const HomeContent = () => {
@@ -18,6 +20,8 @@ const HomeContent = () => {
   const { toast } = useToast()
   const { isConnected } = useWallet();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  const { isOpen } = getPaymentWindowStatus();
 
   useEffect(() => {
     // Get tgid from URL parameters
@@ -298,7 +302,8 @@ const HomeContent = () => {
 
         {/* Payment Form */}
         <div>
-          <PaymentForm paymentId={tgid || 'No ID Provided Yet'} />
+          {isOpen && <PaymentForm paymentId={tgid || 'No ID Provided Yet'} />}
+          {!isOpen && <PaymentClosed />}
         </div>
       </div>
 
