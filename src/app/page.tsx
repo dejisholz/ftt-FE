@@ -21,8 +21,8 @@ const HomeContent = () => {
   const { isConnected } = useWallet();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
-  // const { isOpen } = getPaymentWindowStatus();
-  const isOpen = true;
+  const { isOpen } = getPaymentWindowStatus();
+  // const isOpen = true;
 
   useEffect(() => {
     // Get tgid from URL parameters
