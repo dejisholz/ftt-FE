@@ -107,7 +107,6 @@ export async function createChannelInviteLink(
       );
     }
 
-    console.log('Telegram API response:', data); // Debug log
     return data;
   } catch (error) {
     console.error("Error details:", error);
@@ -149,7 +148,7 @@ export async function sendMessage(
       `Telegram API error: ${data.description || "Unknown error"}`
     );
   }
-  console.log("Telegram MessageAPI response:", data);
+  console.log("Telegram MessageAPI Successfully sent");
   return data;
 }
 
