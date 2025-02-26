@@ -1,19 +1,32 @@
 import { Button } from "@/components/ui/button";
-import { useState} from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  fetchSpecificTransaction,
-} from "@/utils/trc20Actions";
+import { fetchSpecificTransaction } from "@/utils/trc20Actions";
 import { sendMessage, createChannelInviteLink } from "@/utils/botActions";
 import { addTransaction, findTransaction } from "@/utils/transactionHandler";
 
 // d3f4e8d3e097ca8b42ec54af420e8a4b448d02296ad8e81f08b509a1f96defdd
+
+// Add this constant at the top of the file
+const PAYMENT_ADDRESSES = {
+  ADDRESS_A: {
+    id: "address_a",
+    label: "Payment Address A",
+    address: "TCRntw5B9QCUdmA6FcNZWKQPs621iH83ja"
+  },
+  ADDRESS_B: {
+    id: "address_b",
+    label: "Payment Address B",
+    address: "TDFt3aHZYzzU2NBw8vvPov2AknF16gMWDH"
+  }
+} as const;
 
 export default function PaymentForm(props: { paymentId: string | number }) {
   const [selectedPayment, setSelectedPayment] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState("");
   const { toast } = useToast();
   const botToken = process.env.NEXT_PUBLIC_BOT_TOKEN as string;
   const channelId = process.env.NEXT_PUBLIC_CHANNEL_ID as string;
@@ -30,7 +43,11 @@ export default function PaymentForm(props: { paymentId: string | number }) {
     });
   };
 
-  function isTimeframeExceeded(timestamp1: number, timestamp2: number, hours: number): boolean {
+  function isTimeframeExceeded(
+    timestamp1: number,
+    timestamp2: number,
+    hours: number
+  ): boolean {
     const differenceInMs = Math.abs(timestamp2 - timestamp1);
     const differenceInHours = differenceInMs / (1000 * 60 * 60);
     return differenceInHours > hours;
@@ -47,12 +64,21 @@ export default function PaymentForm(props: { paymentId: string | number }) {
       return;
     }
 
+    if (!selectedAddress) {
+      toast({
+        title: "⚠️ Error",
+        description: "Please select the payment address you sent funds to",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsVerifying(true);
 
       // Check if transaction is already processed
       const existingTransaction = await findTransaction(transactionHash);
-      
+
       if (existingTransaction && existingTransaction.length > 0) {
         toast({
           title: "⚠️ Transaction Already Processed",
@@ -63,30 +89,44 @@ export default function PaymentForm(props: { paymentId: string | number }) {
         return;
       }
 
-      const merchantAddress =
-        process.env.NEXT_PUBLIC_MERCHANT_TRON_ADDRESS || "";
+      // Use the selected address for verification
+      const selectedWallet = Object.values(PAYMENT_ADDRESSES).find(
+        addr => addr.id === selectedAddress
+      );
+
+      if (!selectedWallet) {
+        toast({
+          title: "❌ Error",
+          description: "Invalid payment address selected",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const isValid = await fetchSpecificTransaction(
-        merchantAddress,
+        selectedWallet.address,
         transactionHash
       )
         .then((response) => {
           if (!response) return false;
           const isValidTx = response.transaction_id === transactionHash;
           const amountInUSDT = Number(response.amount) / 10 ** 6;
-          const timeDifference = isTimeframeExceeded(response.timestamp || Date.now(), Date.now(), 0.5);
+          const timeDifference = isTimeframeExceeded(
+            response.timestamp || Date.now(),
+            Date.now(),
+            0.5
+          );
           return isValidTx && amountInUSDT >= 25 && !timeDifference;
         })
         .catch((error) => {
           console.error("Error details:", error);
           toast({
             title: "❌ Error",
-            description:
-              error instanceof Error
-                ? error.message
-                : "An unknown error occurred",
+            description: error instanceof Error ? error.message : "An unknown error occurred",
             variant: "destructive",
           });
         });
+
       console.log(isValid);
       if (isValid) {
         try {
@@ -99,10 +139,17 @@ export default function PaymentForm(props: { paymentId: string | number }) {
           });
 
           // Request invite link from bot
-          const inviteLinkResponse = await createChannelInviteLink(botToken, channelId);
+          const inviteLinkResponse = await createChannelInviteLink(
+            botToken,
+            channelId
+          );
           setInviteLink(inviteLinkResponse.result.invite_link);
-          await sendMessage(botToken, paymentId, inviteLinkResponse.result.invite_link);
-          
+          await sendMessage(
+            botToken,
+            paymentId,
+            inviteLinkResponse.result.invite_link
+          );
+
           toast({
             title: "✅ Invite Link Sent!",
             description: "Invite link has been sent to your Telegram account",
@@ -174,32 +221,60 @@ export default function PaymentForm(props: { paymentId: string | number }) {
           <div className="text-center space-y-2">
             <p className="text-xl font-semibold">Send Exactly</p>
             <p className="text-3xl font-bold text-teal-400">25 usdt</p>
-            <div className="flex items-center justify-center gap-2 bg-black/30 p-3 rounded-lg">
-              <input
-                type="text"
-                value="TCRntw5B9QCUdmA6FcNZWKQPs621iH83ja"
-                readOnly
-                className="bg-transparent text-white text-center flex-1 outline-none text-[10px] md:text-base lg:text-lg"
-              />
-              <button
-                className="text-teal-400 hover:text-teal-300"
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    "TCRntw5B9QCUdmA6FcNZWKQPs621iH83ja"
-                  );
-                  toast({
-                    title: "✔️ Copied to clipboard",
-                  });
-                }}
-              >
-                <span className="material-icons">content_copy</span>
-              </button>
-            </div>
+            {/* Update the address display sections to use the constant */}
+            {Object.values(PAYMENT_ADDRESSES).map((paymentAddr) => (
+              <div key={paymentAddr.id} className="gap-2 flex flex-col border border-white/20 p-4 rounded-xl">
+                <div>
+                  <p className="text-lg font-extrabold text-teal-400">
+                    {paymentAddr.label}
+                  </p>
+                </div>
+                <div className="flex items-center justify-center gap-2 bg-black/30 p-3 rounded-lg">
+                  <input
+                    type="text"
+                    value={paymentAddr.address}
+                    readOnly
+                    className="bg-transparent text-white text-center flex-1 outline-none text-[10px] md:text-base lg:text-lg"
+                  />
+                  <button
+                    className="text-teal-400 hover:text-teal-300"
+                    onClick={() => {
+                      navigator.clipboard.writeText(paymentAddr.address);
+                      toast({
+                        title: "✔️ Copied to clipboard",
+                      });
+                    }}
+                  >
+                    <span className="material-icons">content_copy</span>
+                  </button>
+                </div>
+              </div>
+            ))}
             <p className="text-red-400 text-sm">
               *Make sure to select the{" "}
               <span className="text-orange-500">TRON(TRC20)</span> Network, if
               you are transferring from Bybit, Binance or any Crypto Exchange*
             </p>
+          </div>
+
+          {/* Update the address selection dropdown */}
+          <div>
+            <select
+              value={selectedAddress}
+              onChange={(e) => setSelectedAddress(e.target.value)}
+              onClick={() => !isTgidValid && handleInvalidTgid()}
+              disabled={!isTgidValid}
+              className={`w-full bg-white text-gray-900 rounded px-4 py-3 text-base pr-10 focus:outline-none focus:ring-2 focus:ring-teal-500 ${
+                !isTgidValid ? "cursor-not-allowed opacity-50" : ""
+              }`}
+            >
+              <option value="">- Select Payment Address -</option>
+              {Object.values(PAYMENT_ADDRESSES).map((addr) => (
+                <option key={addr.id} value={addr.id}>
+                  {addr.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="space-y-2">
@@ -219,11 +294,11 @@ export default function PaymentForm(props: { paymentId: string | number }) {
 
       <Button
         className={`w-full ${
-          selectedPayment && !isVerifying
+          selectedPayment && selectedAddress && !isVerifying
             ? "bg-teal-500 hover:bg-teal-600"
             : "bg-gray-500 cursor-not-allowed"
         } h-12 text-base flex items-center justify-center gap-2`}
-        disabled={!selectedPayment || isVerifying}
+        disabled={!selectedPayment || !selectedAddress || isVerifying}
         onClick={() => handleVerifyTransaction(props.paymentId)}
       >
         {isVerifying ? (
