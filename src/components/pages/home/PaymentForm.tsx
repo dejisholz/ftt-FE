@@ -114,7 +114,7 @@ export default function PaymentForm(props: { paymentId: string | number }) {
           const timeDifference = isTimeframeExceeded(
             response.timestamp || Date.now(),
             Date.now(),
-            5
+            0.5
           );
           return isValidTx && amountInUSDT >= 25 && !timeDifference;
         })
